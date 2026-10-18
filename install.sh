@@ -1,7 +1,21 @@
 #!/bin/sh
 # install, update or remove the 2rex agent panel
 #   ./install.sh [install | uninstall | status]
+#   curl -fsSL https://raw.githubusercontent.com/hesennivas/2rex/develop/install.sh | sh
 set -eu
+
+# piped from curl there are no sibling files, so fetch the repo and run its copy
+if ! [ -f "$0" ] || ! [ -d "$(dirname "$0")/agents" ]; then
+  url=${TWOREX_TARBALL:-https://github.com/hesennivas/2rex/archive/refs/heads/develop.tar.gz}
+  home=${XDG_DATA_HOME:-$HOME/.local/share}/2rex
+  mkdir -p "$(dirname "$home")"
+  rm -rf "$home.new"
+  mkdir "$home.new"
+  curl -fsSL "$url" | tar -xz -C "$home.new" --strip-components=1
+  rm -rf "$home"
+  mv "$home.new" "$home"
+  exec sh "$home/install.sh" "$@"
+fi
 
 marker='-- rex agent panel'
 label='rex-agents-collector'
@@ -26,6 +40,7 @@ find_rex() {
     '/Applications/Rex.app/Contents/Helpers/Rex Server.app/Contents/MacOS/rex'; do
     [ -x "$p" ] && { echo "$p"; return; }
   done
+  return 0
 }
 rex=$(find_rex)
 
@@ -103,7 +118,7 @@ install() {
   check_draft
   mv "$config.tmp" "$config"
   rm -f "$state/off"
-  if reload 'the panel starts with it'; then
+  if [ -n "$rex" ] && reload 'the panel starts with it'; then
     # the server reads REX_CONFIG from its own environment, which can differ from this shell's
     "$rex" --autostart=false --timeout=5s --color=never actions 2>/dev/null | grep -q '^show_agent_panel ' ||
       echo "the running rex server did not load $config; check REX_CONFIG where rex runs" >&2
