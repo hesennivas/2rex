@@ -14,7 +14,7 @@ Move to rex from herdr, and get an agent panel that lists your claude and codex 
 curl -fsSL https://raw.githubusercontent.com/hesennivas/2rex/develop/install.sh | sh
 ```
 
-This downloads 2rex to `~/.local/share/2rex` and installs the panel. Run it again to update. From a clone:
+This downloads 2rex to `~/.local/share/2rex`, links the `2rex` command into `~/.local/bin` and installs the panel. Run it again to update. From a clone:
 
 ```sh
 ./install.sh            # install or update
@@ -26,8 +26,15 @@ The panel opens on the left of each window. If it doesn't, run **show agent pane
 ## Import from herdr
 
 ```sh
-./2rex herdr --dry-run   # preview
-./2rex herdr             # import
+2rex herdr --dry-run   # preview
+2rex herdr             # import
 ```
 
-See `./2rex herdr --help` for more options.
+Without installing the panel, or from a clone:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/hesennivas/2rex/develop/install.sh | sh -s -- 2rex herdr --dry-run
+./2rex herdr --dry-run
+```
+
+See `2rex herdr --help` for more options.

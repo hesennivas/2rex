@@ -1,6 +1,6 @@
 #!/bin/sh
 # install, update or remove the 2rex agent panel
-#   ./install.sh [install | uninstall | status]
+#   ./install.sh [install | uninstall | status | 2rex ARGS...]
 #   curl -fsSL https://raw.githubusercontent.com/hesennivas/2rex/develop/install.sh | sh
 set -eu
 
@@ -14,6 +14,8 @@ if ! [ -f "$0" ] || ! [ -d "$(dirname "$0")/agents" ]; then
   curl -fsSL "$url" | tar -xz -C "$home.new" --strip-components=1
   rm -rf "$home"
   mv "$home.new" "$home"
+  mkdir -p "$HOME/.local/bin"
+  ln -sf "$home/2rex" "$HOME/.local/bin/2rex"
   exec sh "$home/install.sh" "$@"
 fi
 
@@ -146,5 +148,6 @@ case "${1:-install}" in
   install) install ;;
   uninstall) uninstall ;;
   status) status ;;
-  *) echo 'usage: ./install.sh [install | uninstall | status]' >&2; exit 2 ;;
+  2rex) shift; exec "$(dirname "$src")/2rex" "$@" ;;
+  *) echo 'usage: ./install.sh [install | uninstall | status | 2rex ARGS...]' >&2; exit 2 ;;
 esac
