@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+
+# internal notes, api dumps and screenshots
+artifacts/
+docs/
+
+# agent notes and local settings
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+.claude/
+*.log
